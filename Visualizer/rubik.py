@@ -1,3 +1,4 @@
+import cube_controller
 import numpy as np
 import pygame
 from pygame.locals import *
@@ -693,7 +694,6 @@ def rotate_cube(move, reverse=False):
                     for i in range(8):
                         piece[i] = y_rot(piece[i], theta)
 
-
 def key_callback(window, key, scancode, action, mods):
     if action == glfw.PRESS:
         if key == glfw.KEY_F:
@@ -709,8 +709,14 @@ def key_callback(window, key, scancode, action, mods):
         elif key == glfw.KEY_R:
             rotate_cube('R')
 
+def update_cube(move):
+    print(f"Received move: {move}")
+    rotate_cube(move)
+
 def main():
     global window, last_x, last_y
+    cube_controller_instance = cube_controller.CubeController()
+    cube_controller_instance.moveSignal.connect(update_cube)
 
     if not glfw.init():
         return
