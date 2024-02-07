@@ -8,9 +8,17 @@ int main(int argc, char* argv[]) {
     std::string mixSequence = argv[1];
 
     RubiksCube cube;
-    cube.applyMixSequence(mixSequence);
+    std::cout << "==== STARTING MIXING ====" << std::endl;
+    if (cube.applyMixSequence(mixSequence) == false) {
+        std::cerr << "Error while applying mix sequence" << std::endl;
+        
+        return 1;
+    }
+    std::cout << "==== END OF MIXING ====" << std::endl << std::endl;
+    std::cout << "==== STARTING SOLVING ====" << std::endl;
     std::string solution = cube.solveCube();
     std::cout << "Solution sequence: " << solution << std::endl;
+    std::cout << "==== END OF SOLVING ====" << std::endl;
 
     return 0;
 }

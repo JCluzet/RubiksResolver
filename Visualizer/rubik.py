@@ -1,9 +1,9 @@
-import cube_controller
 import numpy as np
 import pygame
 from pygame.locals import *
 import copy
 import sys
+import cube_controller
 import glfw
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -713,10 +713,24 @@ def update_cube(move):
     print(f"Received move: {move}")
     rotate_cube(move)
 
+def read_and_execute_moves(filepath, last_known_position):
+    """
+    Lit les nouveaux mouvements depuis le fichier et les applique au cube.
+    """
+    with open(filepath, 'r') as file:
+        moves = file.readlines()
+    
+    # Appliquer seulement les nouveaux mouvements
+    new_moves = moves[last_known_position:]
+    for move in new_moves:
+        move = move.strip()
+        print(f"Executing move: {move}")
+        rotate_cube(move)
+    
+    return len(moves)  # Retourne la nouvelle position
+
 def main():
     global window, last_x, last_y
-    cube_controller_instance = cube_controller.CubeController()
-    cube_controller_instance.moveSignal.connect(update_cube)
 
     if not glfw.init():
         return
@@ -735,8 +749,18 @@ def main():
     glfw.set_mouse_button_callback(window, mouse_button_callback)
     glfw.set_key_callback(window, key_callback)
 
+    filepath = 'moves.txt'
+    last_known_position = 0
+
     while not glfw.window_should_close(window):
         glfw.poll_events()
+        try:
+            last_known_position = read_and_execute_moves(filepath, last_known_position)
+        except FileNotFoundError:
+            print("Moves file not found. Please ensure 'moves.txt' exists.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        
         display()
 
     glfw.terminate()
