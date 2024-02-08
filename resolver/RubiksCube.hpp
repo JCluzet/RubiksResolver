@@ -14,6 +14,7 @@ private:
     std::map<char, std::vector<std::string>> cubeState;
     int calculMoveLength(const std::string& move);
     void makeMoves(const std::vector<std::string>& moves);
+    void resolutionPercentage() const;
     void makeMoveF();
     void makeMoveB();
     void makeMoveU();

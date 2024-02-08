@@ -31,6 +31,7 @@ bool RubiksCube::applyMixSequence(const std::string& sequence) {
         // put the display to display 
         std::cout.flush();
         showRubik();
+        
         // if this is not the last move we sleep for 1 second
         if(iss.rdbuf()->in_avail() != 0) {
             usleep(1000000);
