@@ -3,7 +3,6 @@ import pygame
 from pygame.locals import *
 import copy
 import sys
-import cube_controller
 import glfw
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -713,21 +712,23 @@ def update_cube(move):
     print(f"Received move: {move}")
     rotate_cube(move)
 
-def read_and_execute_moves(filepath, last_known_position):
+def read_and_execute_moves(filepath):
     """
-    Lit les nouveaux mouvements depuis le fichier et les applique au cube.
+    Lit les nouveaux mouvements depuis le fichier, les applique au cube, puis supprime les lignes lues.
     """
     with open(filepath, 'r') as file:
         moves = file.readlines()
-    
-    # Appliquer seulement les nouveaux mouvements
-    new_moves = moves[last_known_position:]
-    for move in new_moves:
-        move = move.strip()
-        print(f"Executing move: {move}")
-        rotate_cube(move)
-    
-    return len(moves)  # Retourne la nouvelle position
+
+    # Appliquer les mouvements lus
+    for move in moves:
+        move = move.strip()  # Enlève les espaces et retours à la ligne
+        if move:  # Vérifie que la ligne n'est pas vide
+            print(f"Executing move: {move}")
+            rotate_cube(move)  # Remplacez cette fonction par votre logique d'application du mouvement
+
+    # Réécrire le fichier sans les mouvements qui viennent d'être lus
+    with open(filepath, 'w') as file:
+        file.write("")  # Efface le contenu du fichier après avoir exécuté les mouvements
 
 def main():
     global window, last_x, last_y
@@ -750,12 +751,11 @@ def main():
     glfw.set_key_callback(window, key_callback)
 
     filepath = 'moves.txt'
-    last_known_position = 0
 
     while not glfw.window_should_close(window):
         glfw.poll_events()
         try:
-            last_known_position = read_and_execute_moves(filepath, last_known_position)
+            read_and_execute_moves(filepath)
         except FileNotFoundError:
             print("Moves file not found. Please ensure 'moves.txt' exists.")
         except Exception as e:

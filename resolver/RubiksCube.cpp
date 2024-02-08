@@ -1,11 +1,24 @@
 #include "RubiksCube.hpp"
 // Utiliser std::map pour stocker l'état du cube
 
+bool RubiksCube::checkParsing(const std::string& sequence) {
+    std::istringstream iss(sequence);
+    std::string move;
+
+    while (iss >> move) {
+        if(parseMove(move, false) == false) {
+            std::cerr << "\033[1;31mInvalid move: " << move << "\033[0m" << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
 bool RubiksCube::applyMixSequence(const std::string& sequence) {
     std::istringstream iss(sequence);
     std::string move;
     while (iss >> move) {
-        if(parseMove(move) == false) {
+        if(parseMove(move, true) == false) {
             std::cerr << std::endl;
             // std::cerr << "\033[1;31mInvalid move: " << move << "\033[0m" << std::endl;
             return false;
@@ -68,24 +81,30 @@ RubiksCube::RubiksCube() {
 }
 
 
-bool RubiksCube::parseMove(const std::string& move) {
+bool RubiksCube::parseMove(const std::string& move, bool enableMove) {
     int moveLength = calculMoveLength(move);
     if (moveLength == -1) {
         // std::cerr << "\033[1;31mInvalid lenght move: " << move << "\033[0m" << std::endl;
         return false;
     }
     if (move[0] == 'R') {
-        applyMove('R', moveLength);
+        if (enableMove)
+            applyMove('R', moveLength);
     } else if (move[0] == 'L') {
-        applyMove('L', moveLength);
+        if (enableMove)
+            applyMove('L', moveLength);
     } else if (move[0] == 'U') {
-        applyMove('U', moveLength);
+        if (enableMove)
+            applyMove('U', moveLength);
     } else if (move[0] == 'D') {
-        applyMove('D', moveLength);
+        if (enableMove)        
+            applyMove('D', moveLength);
     } else if (move[0] == 'F') {
-        applyMove('F', moveLength);
+        if (enableMove)            
+            applyMove('F', moveLength);
     } else if (move[0] == 'B') {
-        applyMove('B', moveLength);
+        if (enableMove)    
+            applyMove('B', moveLength);
     }
     else {
         // put a std::cout in RED
@@ -104,7 +123,6 @@ void writeMovesToFile(const std::vector<std::string>& moves, const std::string& 
     }
 }
 
-#include <algorithm> // Pour std::rotate
 
 void RubiksCube::makeMoves(const std::vector<std::string>& moves) {
     for (const auto& move : moves) {
