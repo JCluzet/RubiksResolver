@@ -17,6 +17,7 @@ bool RubiksCube::checkParsing(const std::string& sequence) {
 bool RubiksCube::applyMixSequence(const std::string& sequence) {
     std::istringstream iss(sequence);
     std::string move;
+    showRubik();
     while (iss >> move) {
         if(parseMove(move, true) == false) {
             std::cerr << std::endl;
@@ -29,6 +30,7 @@ bool RubiksCube::applyMixSequence(const std::string& sequence) {
         }
         // put the display to display 
         std::cout.flush();
+        showRubik();
         // if this is not the last move we sleep for 1 second
         if(iss.rdbuf()->in_avail() != 0) {
             usleep(1000000);
@@ -63,22 +65,7 @@ int RubiksCube::calculMoveLength(const std::string& move) {
     }
 }
 
-RubiksCube::RubiksCube() {
-    // Initialisation de l'état du cube
-    cubeState = {
-        {'F', std::vector<std::string>(9, "W")},
-        {'R', std::vector<std::string>(9, "G")},
-        {'U', std::vector<std::string>(9, "R")},
-        {'B', std::vector<std::string>(9, "Y")},
-        {'L', std::vector<std::string>(9, "B")},
-        {'D', std::vector<std::string>(9, "O")}
-    };
 
-    // Connexion du signal de mouvement du contrôleur à la méthode parseMove
-    // controller.moveSignal.connect(boost::bind(&RubiksCube::parseMove, this, _1));
-
-
-}
 
 
 bool RubiksCube::parseMove(const std::string& move, bool enableMove) {
@@ -124,11 +111,6 @@ void writeMovesToFile(const std::vector<std::string>& moves, const std::string& 
 }
 
 
-void RubiksCube::makeMoves(const std::vector<std::string>& moves) {
-    for (const auto& move : moves) {
-        char face = move[0];
-    }
-}
 
 void RubiksCube::applyMove(const char face, const int moveLength) {
     // Votre implémentation ici

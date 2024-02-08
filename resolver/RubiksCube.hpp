@@ -13,7 +13,15 @@ class RubiksCube {
 private:
     std::map<char, std::vector<std::string>> cubeState;
     int calculMoveLength(const std::string& move);
-void makeMoves(const std::vector<std::string>& moves);
+    void makeMoves(const std::vector<std::string>& moves);
+    void makeMoveF();
+    void makeMoveB();
+    void makeMoveU();
+    void makeMoveD();
+    void makeMoveL();
+    void makeMoveR();
+    void showRubik();
+
 
 public:
     RubiksCube(); // Constructeur
