@@ -20,8 +20,15 @@ void findCrossWhiteSolution();
 std::vector<std::pair<char, int>> findWhiteEdges();
 void makeMove(const std::string& move);
 void PutCrossOnBottomLayer();
+<<<<<<< HEAD
 int getIndexofColoroOnFace(std::string color, char face);
 
+=======
+void PutWhiteCorners();
+bool checkCornerDown(int index);
+char* whichColor(char face, int index, int cornerPosition);
+int combination(char face, int index);
+>>>>>>> 92e75c2fc8a199574d7f9b644af58420d7ed0eae
 
 
 

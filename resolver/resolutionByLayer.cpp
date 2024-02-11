@@ -28,6 +28,303 @@ int RubiksCube::getIndexofColoroOnFace(std::string color, char face)
     return -1;
 }
 
+
+bool RubiksCube::checkCornerDown(int index) {
+    switch(index) {
+        case 0:
+            if (cubeState['L'][6] != "B" && cubeState['F'][6] != "R")
+                return true;
+        case 2:
+            if (cubeState['F'][8] != "R" && cubeState['R'][8] != "G")
+                return true;
+        case 6:
+            if (cubeState['L'][0] != "B" && cubeState['B'][0] != "O")
+                return true;
+        case 8:
+            if (cubeState['R'][2] != "G" && cubeState['B'][2] != "O")
+                return true;
+    }
+    return false;
+}
+
+// 8 positions differentes possibles, plusieurs orientations possibles
+// corners possibles sooit orange/vert;orange/bleu soit rouge/vert;rouge/bleu
+
+
+// fonction qui retire le corner de la bottom layer (turn la face sur laquelle il est (right/left) puis qui le retire avec up U et qui remet la croix blanche ensuite)
+// fonction qui met le corner blanc a la bonne position en fonction de l'index 1 2 3 ou 4 de l'autre fonction
+// fonction qui fait l'algorithme en fonction de l'orientation
+
+
+bool isBottomLayer(char face, int index) {
+    if (face == 'D')
+        return (true);
+    else if (face == 'B')
+        if (index == 0 || index == 1 || index == 2)
+            return (true);
+    else if (face == 'R' || face == 'L' || face == 'F')
+        if (index == 6 || index == 7 || index == 8)
+            return (true);
+    return (false);
+}
+
+int whichCorner(char face, int index) {
+    switch(index) {
+        case 0:
+            if (face == 'F')
+                return 5;
+            else if (face == 'B')
+                return 3;
+            else if (face == 'D')
+                return 1;
+            else if (face == 'U' || face == 'L')
+                return 7;
+            else if (face == 'R')
+                return 6;
+            break;
+        case 2:
+            if (face == 'F')
+                return 6;                
+            else if (face == 'B')
+                return 4;
+            else if (face == 'D')
+                return 2;
+            else if (face == 'U' || face == 'R')
+                return 8;
+            else if (face == 'L')
+                return 5;
+            break;
+        case 6:
+            if (face == 'F')
+                return 1;
+            else if (face == 'B')
+                return 7;
+            else if (face == 'D' || face == 'L')
+                return 3;
+            else if (face == 'U')
+                return 5;
+            else if (face == 'R')
+                return 2;
+            break;
+        case 8:
+            if (face == 'F')
+                return 2;
+            else if (face == 'B')
+                return 8;
+            else if (face == 'D' || face == 'R')
+                return 4;
+            else if (face == 'U')
+                return 6;
+            else if (face == 'L')
+                return 1;
+            break;
+    }
+}
+
+char* RubiksCube::whichColor(char face, int index, int cornerPosition) {
+    char *colors;
+    switch(cornerPosition) {
+        case 1:
+            if (cubeState['F'][6] == "R" || cubeState['L'][8] == "R" || cubeState['D'][0] == "R") {
+                colors[0] = 'R';
+                if (cubeState['F'][6] == "B" || cubeState['L'][8] == "B" || cubeState['D'][0] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['F'][6] == "G" || cubeState['L'][8] == "G" || cubeState['D'][0] == "G")
+                    colors[1] = 'G';
+            } else if (cubeState['F'][6] == "O" || cubeState['L'][8] == "O" || cubeState['D'][0] == "O") {
+                colors[0] = 'O';
+                if (cubeState['F'][6] == "B" || cubeState['L'][8] == "B" || cubeState['D'][0] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['F'][6] == "G" || cubeState['L'][8] == "G" || cubeState['D'][0] == "G")
+                    colors[1] = 'G';
+            }
+            break;
+        case 2:
+            if (cubeState['F'][8] == "R" || cubeState['R'][6] == "R" || cubeState['D'][2] == "R") {
+                colors[0] = 'R';
+                if (cubeState['F'][8] == "B" || cubeState['R'][6] == "B" || cubeState['D'][2] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['F'][8] == "G" || cubeState['R'][6] == "G" || cubeState['D'][2] == "G")
+                    colors[1] = 'G';
+            } else if (cubeState['F'][8] == "O" || cubeState['R'][6] == "O" || cubeState['D'][2] == "O") {
+                colors[0] = 'O';
+                if (cubeState['F'][8] == "B" || cubeState['R'][6] == "B" || cubeState['D'][2] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['F'][8] == "G" || cubeState['R'][6] == "G" || cubeState['D'][2] == "G")
+                    colors[1] = 'G';
+            }
+            break;
+        case 3:
+            if (cubeState['B'][0] == "R" || cubeState['L'][6] == "R" || cubeState['D'][6] == "R") {
+                colors[0] = 'R';
+                if (cubeState['B'][0] == "B" || cubeState['L'][6] == "B" || cubeState['D'][6] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['B'][0] == "G" || cubeState['L'][6] == "G" || cubeState['D'][6] == "G")
+                    colors[1] = 'G';
+            } else if (cubeState['B'][0] == "O" || cubeState['L'][6] == "O" || cubeState['D'][6] == "O") {
+                colors[0] = 'O';
+                if (cubeState['B'][0] == "B" || cubeState['L'][6] == "B" || cubeState['D'][6] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['B'][0] == "G" || cubeState['L'][6] == "G" || cubeState['D'][6] == "G")
+                    colors[1] = 'G';
+            }
+            break;
+        case 4:
+            if (cubeState['B'][2] == "R" || cubeState['R'][8] == "R" || cubeState['D'][8] == "R") {
+                colors[0] = 'R';
+                if (cubeState['B'][2] == "B" || cubeState['R'][8] == "B" || cubeState['D'][8] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['B'][2] == "G" || cubeState['R'][8] == "G" || cubeState['D'][8] == "G")
+                    colors[1] = 'G';
+            } else if (cubeState['B'][2] == "O" || cubeState['R'][8] == "O" || cubeState['D'][8] == "O") {
+                colors[0] = 'O';
+                if (cubeState['B'][2] == "B" || cubeState['R'][8] == "B" || cubeState['D'][8] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['B'][2] == "G" || cubeState['R'][8] == "G" || cubeState['D'][8] == "G")
+                    colors[1] = 'G';
+            }
+            break;
+        case 5:
+            if (cubeState['F'][0] == "R" || cubeState['L'][2] == "R" || cubeState['U'][6] == "R") {
+                colors[0] = 'R';
+                if (cubeState['F'][0] == "B" || cubeState['L'][2] == "B" || cubeState['U'][6] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['F'][0] == "G" || cubeState['L'][2] == "G" || cubeState['U'][6] == "G")
+                    colors[1] = 'G';
+            } else if (cubeState['F'][0] == "O" || cubeState['L'][2] == "O" || cubeState['U'][6] == "O") {
+                colors[0] = 'O';
+                if (cubeState['F'][0] == "B" || cubeState['L'][2] == "B" || cubeState['U'][6] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['F'][0] == "G" || cubeState['L'][2] == "G" || cubeState['U'][6] == "G")
+                    colors[1] = 'G';
+            }
+            break;
+        case 6:
+            if (cubeState['F'][2] == "R" || cubeState['R'][0] == "R" || cubeState['U'][8] == "R") {
+                colors[0] = 'R';
+                if (cubeState['F'][2] == "B" || cubeState['R'][0] == "B" || cubeState['U'][8] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['F'][2] == "G" || cubeState['R'][0] == "G" || cubeState['U'][8] == "G")
+                    colors[1] = 'G';
+            } else if (cubeState['F'][2] == "O" || cubeState['R'][0] == "O" || cubeState['U'][8] == "O") {
+                colors[0] = 'O';
+                if (cubeState['F'][2] == "B" || cubeState['R'][0] == "B" || cubeState['U'][8] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['F'][2] == "G" || cubeState['R'][0] == "G" || cubeState['U'][8] == "G")
+                    colors[1] = 'G';
+            }
+            break;
+        case 7:
+            if (cubeState['B'][6] == "R" || cubeState['L'][0] == "R" || cubeState['U'][0] == "R") {
+                colors[0] = 'R';
+                if (cubeState['B'][6] == "B" || cubeState['L'][0] == "B" || cubeState['U'][0] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['B'][6] == "G" || cubeState['L'][0] == "G" || cubeState['U'][0] == "G")
+                    colors[1] = 'G';
+            } else if (cubeState['B'][6] == "O" || cubeState['L'][0] == "O" || cubeState['U'][0] == "O") {
+                colors[0] = 'O';
+                if (cubeState['B'][6] == "B" || cubeState['L'][0] == "B" || cubeState['U'][0] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['B'][6] == "G" || cubeState['L'][0] == "G" || cubeState['U'][0] == "G")
+                    colors[1] = 'G';
+            }
+            break;
+        case 8:
+            if (cubeState['B'][8] == "R" || cubeState['R'][2] == "R" || cubeState['U'][2] == "R") {
+                colors[0] = 'R';
+                if (cubeState['B'][8] == "B" || cubeState['R'][2] == "B" || cubeState['U'][2] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['B'][8] == "G" || cubeState['R'][2] == "G" || cubeState['U'][2] == "G")
+                    colors[1] = 'G';
+            } else if (cubeState['B'][8] == "O" || cubeState['R'][2] == "O" || cubeState['U'][2] == "O") {
+                colors[0] = 'O';
+                if (cubeState['B'][8] == "B" || cubeState['R'][2] == "B" || cubeState['U'][2] == "B")
+                    colors[1] = 'B';
+                else if (cubeState['B'][8] == "G" || cubeState['R'][2] == "G" || cubeState['U'][2] == "G")
+                    colors[1] = 'G';
+            }
+            break;
+    }
+    return (colors);
+}
+
+int RubiksCube::combination(char face, int index) {
+    int cornerPosition = whichCorner(face, index);
+    char *colors = whichColor(face, index, cornerPosition);
+    if (colors[0] == 'R') {
+        if (colors[1] == 'B')
+            return 1;
+        else
+            return 2;
+    } else if (colors[0] == 'O') {
+        if (colors[1] == 'B')
+            return 3;
+        else
+            return 4;
+    }
+}
+
+bool isItFacingYou(int cornerPosition, char face) {
+    switch(cornerPosition) {
+        case 1:
+            if (face == 'L')
+                return (false);
+            return (true);
+        case 2:
+            if (face == 'F')
+                return (false);
+            return (true);
+        case 3:
+            if (face == 'B')
+                return (false);
+            return (true);
+        case 4:
+            if (face == 'R')
+                return (false);
+            return (true);
+    }
+}
+
+void doCornerAlgorithm(int whereToGo, char face) {
+    if (face == 'U')
+        doUpAlgo() // WHILE FACE FACING YOU R' D2 R D R' D' R
+    else if (isItFacingYou(whereToGo, face))
+        doFacingYouAlgo(); // F D F'
+    else
+        doFacingRightAlgo(); // R' D' R
+}
+
+void RubiksCube::PutWhiteCorners() {
+    auto hasWhiteCorner = [&]() -> bool {
+        for (auto &face : {'F', 'R', 'B', 'L', 'U', 'D'}) {
+            for (int index : {0, 2, 6, 8}) {
+                if (cubeState[face][index] == "W") {
+                    if (face == 'D' && checkCornerDown(index))
+                        break;
+                    std::cout << "Corner trouve a face :" << face << "et index : " << index << std::endl;
+                    return true;
+                }
+            }
+        }
+        std::cout << "Plus de corners blancs chef ! " << std::endl;
+        return false;
+    };
+
+    while (hasWhiteCorner()) {
+        for (auto &face : {'F', 'R', 'B', 'L', 'D', 'U'}) {
+            for (int index : {0, 2, 6, 8}) {
+                if (cubeState[face][index] == "W") {
+                    int whereToGo = combination(face, index);
+                    if (isBottomLayer())
+                        getOutOfBottomLayer();
+                    char new_face = putCornerInPosition(whereToGo);
+                    doCornerAlgorithm(whereToGo, new_face);
+                }
+            }
+        }
+    }
+}
+
 void RubiksCube::PutCrossOnBottomLayer()
 {
     std::cout << "Put the cross on the white layer (D):" << std::endl;
@@ -108,87 +405,45 @@ void RubiksCube::PutCrossOnBottomLayer()
     }
 }
 
-// RubiksCube::RubiksCube() {
-//     // Initialisation de l'état du cube
-//     solution = "";
-//     cubeState = {
-//         {'F', std::vector<std::string>(9, "R")}, // GOOD
-//         {'R', std::vector<std::string>(9, "G")}, // GOOD
-//         {'U', std::vector<std::string>(9, "Y")}, // GOOD
-//         {'B', std::vector<std::string>(9, "O")}, // GOOD
-//         {'L', std::vector<std::string>(9, "B")}, // GOOD
-//         {'D', std::vector<std::string>(9, "W")}  // GOOD
-//     };
-// }
-
 void RubiksCube::CrossOnTopLayer()
 {
     std::cout << "Forming white cross on bottom layer (D):" << std::endl;
 
-    auto hasWhiteEdge = [&]() -> bool
-    {
-        for (auto &face : {'F', 'R', 'B', 'L', 'D'})
-        { // Parcourir toutes les faces sauf U
-            for (int index : {1, 3, 5, 7})
-            { // Indices possibles pour les arêtes
-                if (cubeState[face][index] == "W")
-                {
-                    std::cout << "Arete trouvee !!!!!!!!!"
-                              << "a face :" << face << "et index : " << index << std::endl;
-                    std::cout << "cubestate : " << cubeState['B'][1] << std::endl;
-                     std::cout << "Click on a key to continue" << std::endl;
-                    return true; // Une arête blanche est trouvée
+    auto hasWhiteEdge = [&]() -> bool {
+        for (auto &face : {'F', 'R', 'B', 'L', 'D'}) {
+            for (int index : {1, 3, 5, 7}) {
+                if (cubeState[face][index] == "W") {
+                    std::cout << "Arrete trouvee a face :" << face << " et index : " << index << std::endl;
+                    return (true);
                 }
             }
         }
         std::cout << "Plus darete chef ! " << std::endl;
-        return false; // Aucune arête blanche n'est trouvée
+        return (false);
     };
 
-    while (hasWhiteEdge())
-    {
-        // Pour chaque arête blanche qui n'est pas sur la face jaune (U)
-        for (auto &face : {'F', 'R', 'B', 'L', 'D'})
-        { // Exclure la face U car nous cherchons les arêtes non situées sur U
-            for (int index : {1, 3, 5, 7})
-            { // Indices possibles pour les arêtes
-                // Vérifier si l'arête à cet index est blanche
-                if (cubeState[face][index] == "W")
-                { // Si une arête blanche est trouvée
-                    std::cout << "Arete trouvee !!!!!!!!!"
-                              << "a face :" << face << "et index : " << index << std::endl;
-    getchar();
-    // clean buffer 
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while (hasWhiteEdge()) {
+        for (auto &face : {'F', 'R', 'B', 'L', 'D'}) {
+            for (int index : {1, 3, 5, 7}) {
+                if (cubeState[face][index] == "W") {
+                    if (face == 'W' && checkCornerDown(index))
+                        break;
                     std::cout << "White edge found on face " << face << " at index " << index << std::endl;
-
-                    // Si l'arête est sur la face blanche (D dans notre cas)
-                    if (face == 'D')
-                    {
+                    if (face == 'D') {
                         if (index == 3)
-                        {
                             while (cubeState['U'][3] == "W")
                                 parseMove("U", true);
-                        }
                         else if (index == 5)
-                        {
                             while (cubeState['U'][5] == "W")
                                 parseMove("U", true);
-                        }
                         else if (index == 1)
-                        {
                             while (cubeState['U'][7] == "W")
                                 parseMove("U", true);
-                        }
                         else if (index == 7)
-                        {
                             while (cubeState['U'][1] == "W")
                                 parseMove("U", true);
-                        }
 
-                        // Effectuer un double tour de la face correspondante
-                        switch (index)
-                        {
+                        switch (index) {
                         case 1:
                             parseMove("F2", true);
                             break;
@@ -203,33 +458,25 @@ void RubiksCube::CrossOnTopLayer()
                             break;
                         }
                     }
-                    else
-                    {
-                        switch (face)
-                        {
+                    else {
+                        switch (face) {
                         case 'F':
-                            if (index == 3 || index == 5)
-                            {
+                            if (index == 3 || index == 5) {
                                 while (cubeState['U'][index] == "W")
                                     parseMove("U", true);
                                 if (index == 3)
                                     parseMove("L'", true);
                                 else
                                     parseMove("R", true);
-                            }
-                            else
-                            {
+                            } else {
                                 while (cubeState['U'][7] == "W" && index != 1)
                                     parseMove("U", true);
                                 parseMove("F", true);
-                                if (index == 1)
-                                {
+                                if (index == 1) {
                                     while (cubeState['U'][5] == "W")
                                         parseMove("U", true);
                                     parseMove("R", true);
-                                }
-                                else
-                                {
+                                } else {
                                     while (cubeState['U'][3] == "W")
                                         parseMove("U", true);
                                     parseMove("L'", true);
@@ -237,28 +484,22 @@ void RubiksCube::CrossOnTopLayer()
                             }
                             break;
                         case 'B':
-                            if (index == 3 || index == 5)
-                            {
+                            if (index == 3 || index == 5) {
                                 while (cubeState['U'][index] == "W")
                                     parseMove("U", true);
                                 if (index == 5)
                                     parseMove("R'", true);
                                 else
                                     parseMove("L", true);
-                            }
-                            else
-                            {
+                            } else {
                                 while (cubeState['U'][1] == "W" && index != 7)
                                     parseMove("U", true);
                                 parseMove("B", true);
-                                if (index == 1)
-                                {
+                                if (index == 1) {
                                     while (cubeState['U'][5] == "W")
                                         parseMove("U", true);
                                     parseMove("R'", true);
-                                }
-                                else
-                                {
+                                } else {
                                     while (cubeState['U'][3] == "W")
                                         parseMove("U", true);
                                     parseMove("L", true);
@@ -266,34 +507,26 @@ void RubiksCube::CrossOnTopLayer()
                             }
                             break;
                         case 'R':
-                            if (index == 3 || index == 5)
-                            {
-                                if (index == 3)
-                                {
+                            if (index == 3 || index == 5) {
+                                if (index == 3) {
                                     while (cubeState['U'][7] == "W")
                                         parseMove("U", true);
                                     parseMove("F'", true);
-                                }
-                                else
-                                {
+                                } else {
                                     while (cubeState['U'][1] == "W")
                                         parseMove("U", true);
                                     parseMove("B", true);
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 while (cubeState['U'][5] == "W" && index != 1)
                                     parseMove("U", true);
                                 parseMove("R", true);
-                                if (index == 1)
-                                {
+                                if (index == 1) {
                                     while (cubeState['U'][1] == "W")
                                         parseMove("U", true);
                                     parseMove("B", true);
                                 }
-                                else
-                                {
+                                else {
                                     while (cubeState['U'][7] == "W")
                                         parseMove("U", true);
                                     parseMove("F'", true);
@@ -301,34 +534,25 @@ void RubiksCube::CrossOnTopLayer()
                             }
                             break;
                         case 'L':
-                            if (index == 3 || index == 5)
-                            {
-                                if (index == 3)
-                                {
+                            if (index == 3 || index == 5) {
+                                if (index == 3) {
                                     while (cubeState['U'][1] == "W")
                                         parseMove("U", true);
                                     parseMove("B'", true);
-                                }
-                                else
-                                {
+                                } else {
                                     while (cubeState['U'][7] == "W")
                                         parseMove("U", true);
                                     parseMove("F", true);
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 while (cubeState['U'][3] == "W" && index != 1)
                                     parseMove("U", true);
                                 parseMove("L", true);
-                                if (index == 7)
-                                {
+                                if (index == 7) {
                                     while (cubeState['U'][1] == "W")
                                         parseMove("U", true);
                                     parseMove("B'", true);
-                                }
-                                else
-                                {
+                                } else {
                                     while (cubeState['U'][7] == "W")
                                         parseMove("U", true);
                                     parseMove("F", true);
@@ -342,103 +566,3 @@ void RubiksCube::CrossOnTopLayer()
         }
     }
 }
-// v    oid RubiksCube::CrossOnTopLayer() {
-//         std::cout << "Forming white cross on bottom layer (D):" << std::endl;
-
-// 1 . Trouver un milieu blanc qui nest pas sur la face jaune
-// 2 . regarder son index et sa face
-//          --> si il est sur la face blanc
-//                 --> il est sur lindex 1 ou 3 ou 5 ou 7
-//                    --> regarder si il ya une face blanche a linverse, si il est en 1 il faut checker la face opposé en 7, si il est en 3 il faut checker la face opposé en 5, en 5 il faut checker la face opposé en 3 et en 7 il faut checker la face opposé en 1
-//                        --> si ya une face blanche en face, on tourne la face UP (jaune) pour que le blanc ne soit pas en face de la face blanche
-//                        --> maintenant que la face en face est libre
-//                           --> si il est en 1 , il faut tourner 2 fois le front
-//                            --> si il est en 3 , il faut tourner 2 fois left
-//                           --> si il est en 5 , il faut tourner 2 fois right
-//                           --> si il est en 7 , il faut tourner 2 fois back
-//           --> si il est ni sur la face blanche, ni sur la jaune
-//                  --> soit il est sur la face rouge, soit la orange
-//                           --> soit il est en index 3
-//                               --> checker si au meme index, a la face jaune, ya un blanc
-//                                    OUI --> tourner la face UP (jaune) jusqua quil yai plus de blanc a cet index sur la face jaune
-//                                    --> maintenant que la face en face est libre, tourner 2 fois la face bleu (LEFT)
-//                           --> soit il est en index 5
-//                               --> checker si au meme index, a la face jaune, ya un blanc
-//                                    OUI --> tourner la face UP (jaune) jusqua quil yai plus de blanc a cet index sur la face jaune
-//                                    --> maintenant que la face en face est libre, tourner 2 fois la face vert (RIGHT)
-//                           --> soit il est en index 1
-//                              --> checker si a lindex | 1 SI ORANGE ; 7 SI ROUGE| de la face jaune, si ya un blanc
-//                                    OUI --> tourner la face UP (jaune) jusqua quil yai plus de blanc a cet index (| 1 SI ORANGE ; 7 SI ROUGE|) sur la face jaune
-//                                    --> maintenant que la face en face est libre, tourner 1 fois la face sur lequel est le milieu blanc quon veut bouger
-//                                      --> checker si a lindex 5 de la face jaune, il ya un milieu blanc, si oui, tourner la face jusqua quil y en ai plus.
-//                                      --> tourner 2 fois la face verte droite (RIGHT)
-//                           --> soit il est en index 7
-//                              --> checker si a lindex | 1 SI ORANGE ; 7 SI ROUGE| de la face jaune, si ya un blanc
-//                                    OUI --> tourner la face UP (jaune) jusqua quil yai plus de blanc a cet index (| 1 SI ORANGE ; 7 SI ROUGE|) sur la face jaune
-//                                    --> maintenant que la face en face est libre, tourner 1 fois la face sur lequel est le milieu blanc quon veut bouger
-//                                      --> checker si a lindex 3 de la face jaune, il ya un milieu blanc, si oui, tourner la face jusqua quil y en ai plus.
-//                                      --> tourner 2 fois la face bleu gauche (LEFT)
-//                  --> soit il est sur la bleu, soit la verte
-//                           --> soit il est en index 1
-//                               --> checker si au meme index, a la face jaune, ya un blanc
-//                                    OUI --> tourner la face UP (jaune) jusqua quil yai plus de blanc a cet index sur la face jaune
-//                                    --> maintenant que la face en face est libre, tourner 2 fois la face orange (BACK)
-//                           --> soit il est en index 7
-//                               --> checker si au meme index, a la face jaune, ya un blanc
-//                                    OUI --> tourner la face UP (jaune) jusqua quil yai plus de blanc a cet index sur la face jaune
-//                                    --> maintenant que la face en face est libre, tourner 2 fois la face rouge (FRONT)
-//                           --> soit il est en index 3
-//                              --> checker si a lindex | 3 SI BLEU ; 5 SI VERT| de la face jaune, si ya un blanc
-//                                    OUI --> tourner la face UP (jaune) jusqua quil yai plus de blanc a cet index (| 3 SI BLEU ; 5 SI VERT|) sur la face jaune
-//                                    --> maintenant que la face en face est libre, tourner 1 fois la face sur lequel est le milieu blanc quon veut bouger
-//                                      --> checker si a lindex 1 de la face jaune, il ya un milieu blanc, si oui, tourner la face jusqua quil y en ai plus.
-//                                      --> tourner 2 fois la face orange (BACK)
-//                           --> soit il est en index 5
-//                              --> checker si a lindex | 3 SI BLEU ; 5 SI VERT| de la face jaune, si ya un blanc
-//                                    OUI --> tourner la face UP (jaune) jusqua quil yai plus de blanc a cet index (| 3 SI BLEU ; 5 SI VERT|) sur la face jaune
-//                                    --> maintenant que la face en face est libre, tourner 1 fois la face sur lequel est le milieu blanc quon veut bouger
-//                                      --> checker si a lindex 7 de la face jaune, il ya un milieu blanc, si oui, tourner la face jusqua quil y en ai plus.
-//                                      --> tourner 2 fois la face rouge (FRONT)
-
-// les fonctions de mouvements sont disponible et ressemble a cela :
-
-// pour appeler un mouvement, il suffit de faite cube.parseMove("F", true);
-// ou encore cube.parseMove("F'", true);
-// ou encore cube.parseMove("F2", true);
-// elle represente
-// void RubiksCube::makeMoveF() {
-//     // Rotation de la face F elle-même
-//     std::vector<std::string> tempF = cubeState['F'];
-//     cubeState['F'][0] = tempF[6];
-//     cubeState['F'][1] = tempF[3];
-//     cubeState['F'][2] = tempF[0];
-//     cubeState['F'][3] = tempF[7];
-//     cubeState['F'][5] = tempF[1];
-//     cubeState['F'][6] = tempF[8];
-//     cubeState['F'][7] = tempF[5];
-//     cubeState['F'][8] = tempF[2];
-
-//     // Sauvegarde temporaire des états pour les faces adjacentes
-//     std::vector<std::string> tempU = cubeState['U'];
-//     std::vector<std::string> tempR = cubeState['R'];
-//     std::vector<std::string> tempD = cubeState['D'];
-//     std::vector<std::string> tempL = cubeState['L'];
-
-//     // Mise à jour des stickers des faces adjacentes
-//     // U vers R, R vers D, D vers L, L vers U
-//     cubeState['R'][0] = tempU[6];
-//     cubeState['R'][3] = tempU[7];
-//     cubeState['R'][6] = tempU[8];
-
-//     cubeState['D'][0] = tempR[6];
-//     cubeState['D'][1] = tempR[3];
-//     cubeState['D'][2] = tempR[0];
-
-//     cubeState['L'][2] = tempD[0];
-//     cubeState['L'][5] = tempD[1];
-//     cubeState['L'][8] = tempD[2];
-
-//     cubeState['U'][6] = tempL[8];
-//     cubeState['U'][7] = tempL[5];
-//     cubeState['U'][8] = tempL[2];
-// }
