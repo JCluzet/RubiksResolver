@@ -20,7 +20,8 @@ void findCrossWhiteSolution();
 std::vector<std::pair<char, int>> findWhiteEdges();
 void makeMove(const std::string& move);
 void PutCrossOnBottomLayer();
-
+void PutWhiteCorners();
+bool checkCornerDown(int index);
 
 
 
