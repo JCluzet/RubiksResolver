@@ -69,13 +69,13 @@ void RubiksCube::makeMoveB() {
     std::vector<std::string> tempL = cubeState['L'];
 
     // Mise à jour des stickers des faces adjacentes pour la rotation de B
-    cubeState['U'][0] = tempR[8];
+    cubeState['U'][0] = tempR[2];
     cubeState['U'][1] = tempR[5];
-    cubeState['U'][2] = tempR[2];
+    cubeState['U'][2] = tempR[8];
 
-    cubeState['L'][0] = tempU[0];
+    cubeState['L'][0] = tempU[2];
     cubeState['L'][3] = tempU[1];
-    cubeState['L'][6] = tempU[2];
+    cubeState['L'][6] = tempU[0];
 
     cubeState['D'][6] = tempL[0];
     cubeState['D'][7] = tempL[3];
@@ -105,12 +105,21 @@ void RubiksCube::makeMoveU() {
     std::vector<std::string> tempL = cubeState['L'];
 
     // Mise à jour des stickers des faces adjacentes pour la rotation de U
-    for (int i = 0; i < 3; ++i) {
-        cubeState['F'][i] = tempR[i];
-        cubeState['R'][i] = tempB[i];
-        cubeState['B'][i] = tempL[i];
-        cubeState['L'][i] = tempF[i];
-    }
+    cubeState['F'][0] = tempR[0];
+    cubeState['F'][1] = tempR[1];
+    cubeState['F'][2] = tempR[2];
+
+    cubeState['R'][0] = tempB[8];
+    cubeState['R'][1] = tempB[7];
+    cubeState['R'][2] = tempB[6];
+
+    cubeState['B'][8] = tempL[0];
+    cubeState['B'][7] = tempL[1];
+    cubeState['B'][6] = tempL[2];
+
+    cubeState['L'][0] = tempF[0];
+    cubeState['L'][1] = tempF[1];
+    cubeState['L'][2] = tempF[2];
 }
 
 
@@ -132,26 +141,34 @@ void RubiksCube::makeMoveD() {
     std::vector<std::string> tempB = cubeState['B'];
     std::vector<std::string> tempL = cubeState['L'];
 
-    // Mise à jour des stickers des faces adjacentes pour la rotation de D
-    for (int i = 6; i <= 8; ++i) {
-        cubeState['F'][i] = tempL[i];
-        cubeState['R'][i] = tempF[i];
-        cubeState['B'][i] = tempR[i];
-        cubeState['L'][i] = tempB[i];
-    }
+    cubeState['F'][6] = tempL[6];
+    cubeState['F'][7] = tempL[7];
+    cubeState['F'][8] = tempL[8];
+
+    cubeState['R'][6] = tempF[6];
+    cubeState['R'][7] = tempF[7];
+    cubeState['R'][8] = tempF[8];
+
+    cubeState['L'][6] = tempB[2];
+    cubeState['L'][7] = tempB[1];
+    cubeState['L'][8] = tempB[0];
+
+    cubeState['B'][2] = tempR[6];
+    cubeState['B'][1] = tempR[7];
+    cubeState['B'][0] = tempR[8];
 }
 
 void RubiksCube::makeMoveL() {
     // Rotation de la face L elle-même dans le sens des aiguilles d'une montre
     std::vector<std::string> tempL = cubeState['L'];
-    cubeState['L'][0] = tempL[2];
-    cubeState['L'][1] = tempL[5];
-    cubeState['L'][2] = tempL[8];
-    cubeState['L'][3] = tempL[1];
-    cubeState['L'][5] = tempL[7];
-    cubeState['L'][6] = tempL[0];
-    cubeState['L'][7] = tempL[3];
-    cubeState['L'][8] = tempL[6];
+    cubeState['L'][0] = tempL[6];
+    cubeState['L'][1] = tempL[3];
+    cubeState['L'][2] = tempL[0];
+    cubeState['L'][3] = tempL[7];
+    cubeState['L'][5] = tempL[1];
+    cubeState['L'][6] = tempL[8];
+    cubeState['L'][7] = tempL[5];
+    cubeState['L'][8] = tempL[2];
 
     // Sauvegarde temporaire des états pour les faces adjacentes
     std::vector<std::string> tempF = cubeState['F'];
@@ -160,9 +177,9 @@ void RubiksCube::makeMoveL() {
     std::vector<std::string> tempD = cubeState['D'];
 
     // Mise à jour des stickers des faces adjacentes pour la rotation de L
-    cubeState['U'][0] = tempB[8];
-    cubeState['U'][3] = tempB[5];
-    cubeState['U'][6] = tempB[2];
+    cubeState['U'][0] = tempB[0];
+    cubeState['U'][3] = tempB[3];
+    cubeState['U'][6] = tempB[6];
 
     cubeState['F'][0] = tempU[0];
     cubeState['F'][3] = tempU[3];
@@ -204,13 +221,13 @@ void RubiksCube::makeMoveR() {
     cubeState['F'][5] = tempD[5];
     cubeState['F'][8] = tempD[8];
 
-    cubeState['D'][2] = tempB[6];
-    cubeState['D'][5] = tempB[3];
-    cubeState['D'][8] = tempB[0];
+    cubeState['D'][2] = tempB[2];
+    cubeState['D'][5] = tempB[5];
+    cubeState['D'][8] = tempB[8];
 
-    cubeState['B'][2] = tempU[6];
-    cubeState['B'][5] = tempU[3];
-    cubeState['B'][8] = tempU[0];
+    cubeState['B'][2] = tempU[2];
+    cubeState['B'][5] = tempU[5];
+    cubeState['B'][8] = tempU[8];
 }
 
 
