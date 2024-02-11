@@ -12,7 +12,20 @@ void RubiksCube::resolutionByLayers()
      std::cout << "Click on a key to continue" << std::endl;
     getchar();
 
-    // PutCrossOnBottomLayer();
+    PutCrossOnBottomLayer();
+}
+
+int RubiksCube::getIndexofColoroOnFace(std::string color, char face)
+{
+    for (int i = 0; i < 9; i++)
+    {
+        if (cubeState[face][i] == color)
+        {
+            std::cout << "index de la couleur " << color << " sur la face " << face << " est : " << i << std::endl;
+            return i;
+        }
+    }
+    return -1;
 }
 
 void RubiksCube::PutCrossOnBottomLayer()
@@ -31,29 +44,60 @@ void RubiksCube::PutCrossOnBottomLayer()
     // 10. when the color is on the face color, turn this face 2 times
 
     // Boucle pour chaque position possible d'une arête blanche sur la face U
-    for (int index : {1, 3, 5, 7}) {
+    int index = -1;
+    while((index = getIndexofColoroOnFace("W", 'U')) != -1)
+    {
+        std::cout << "index actuel : " << index << std::endl;
+        std::cout << "je rentre dans le 1" << std::endl;
         // Vérifie si l'arête à cet index est blanche
         if (cubeState['U'][index] == "W") {
+            std::cout << "je rentre dans le 2" << std::endl;
             std::string color; // Pour stocker la couleur adjacente à l'arête blanche
             char targetFace; // Pour stocker la face cible pour cette couleur
 
-            // Déterminer la couleur adjacente et la face cible
+            // Déterminer la couleur adjacente
             if (index == 1) {
-                color = cubeState['B'][7]; targetFace = 'B';
+                color = cubeState['B'][7];
             } else if (index == 3) {
-                color = cubeState['L'][1]; targetFace = 'L';
+                color = cubeState['L'][1];
             } else if (index == 5) {
-                color = cubeState['R'][1]; targetFace = 'R';
+                color = cubeState['R'][1];
             } else if (index == 7) {
-                color = cubeState['F'][1]; targetFace = 'F';
+                color = cubeState['F'][1];
+            }
+
+            if (color == "R") {
+                targetFace = 'F';
+            }
+            else if (color == "G") {
+                targetFace = 'R';
+            }
+            else if (color == "O") {
+                targetFace = 'B';
+            }
+            else if (color == "B") {
+                targetFace = 'L';
+            }
+            else if (color == "W") {
+                targetFace = 'D';
+            }
+            else if (color == "Y") {
+                targetFace = 'U';
             }
 
             // Affiche la couleur et la face cible
             std::cout << "Couleur adjacente: " << color << ", Face cible: " << targetFace << std::endl;
 
             // Tourner la face U jusqu'à ce que l'arête blanche soit au-dessus de sa face cible
-            while (cubeState[targetFace][4] != color) {
-                parseMove("U", true);
+            if (targetFace == 'B')
+            {
+                while (cubeState['B'][7] != "O")
+                    parseMove("U", true);
+            }
+            else 
+            {
+                while (cubeState[targetFace][1] != color)
+                    parseMove("U", true);
             }
 
             // Une fois en position, tourner la face cible 2 fois pour placer l'arête en bas
