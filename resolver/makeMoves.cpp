@@ -231,7 +231,6 @@ void RubiksCube::makeMoveR() {
 }
 
 
-
 void RubiksCube::showRubik() {
     std::cout << std::endl;
 
@@ -286,7 +285,7 @@ void RubiksCube::showRubik() {
     // Affichage de la face B (arrière) en dessous de D, mais inversée puisqu'elle est à l'opposé de F
     std::cout << std::endl;
     std::cout << "       "; // Espaces pour simuler la face B en bas, inversée
-    for (int i = 2; i >= 0; --i) {
+    for (int i = 0; i < 3; ++i) {
         printRow(cubeState.at('B'), i);
         std::cout << std::endl;
         std::cout << "       ";

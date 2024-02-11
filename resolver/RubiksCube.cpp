@@ -30,6 +30,8 @@ bool RubiksCube::applyMixSequence(const std::string& sequence) {
         }
         // put the display to display 
         std::cout.flush();
+    //      std::cout << "Click on a key to continue" << std::endl;
+    // getchar();
         // showRubik();
 
         // if this is not the last move we sleep for 1 second
@@ -114,8 +116,19 @@ bool RubiksCube::parseMove(const std::string& move, bool enableMove) {
     }
  std::cout << "Move recu : " << move << std::endl;
  showRubik();
- if (enableMove)
-        usleep(2000000);
+    // clean buffer 
+if(enableMove) {
+std::cout << "Click on a key to continue" << std::endl;
+getchar();
+}
+// Optionnel : Vérifiez la valeur de 'input' si nécessaire
+
+
+
+
+
+//  if (enableMove)
+//         usleep(2000000);
     return true;
 }
 

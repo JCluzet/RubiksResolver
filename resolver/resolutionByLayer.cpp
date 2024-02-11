@@ -9,8 +9,10 @@ void RubiksCube::resolutionByLayers()
     CrossOnTopLayer();
 
     std::cout << "2. Put the cross on the white layer" << std::endl;
+     std::cout << "Click on a key to continue" << std::endl;
+    getchar();
 
-    PutCrossOnBottomLayer();
+    // PutCrossOnBottomLayer();
 }
 
 void RubiksCube::PutCrossOnBottomLayer()
@@ -28,56 +30,36 @@ void RubiksCube::PutCrossOnBottomLayer()
     // 9.       --> turn the face UP (yellow) until the color is on the face color ( U = YELLOW, F = RED, R = GREEN, B = ORANGE, L = BLUE, D = WHITE)
     // 10. when the color is on the face color, turn this face 2 times
 
-    // 1 . Trouver un milieu blanc qui est sur la face jaune
-    for (int index : {1, 3, 5, 7})
-    {
-        if (cubeState['U'][index] == "W")
-        {
-            std::cout << "Arete blanche trouvé"
-                      << "a face : U"
-                      << "et index : " << index << std::endl;
-            std::string color;
-            std::string faceSide;
-            if (index == 1)
-            {
-                color = cubeState['B'][7];
-                faceSide = "B";
-            }
-            else if (index == 3)
-            {
-                color = cubeState['L'][1];
-                faceSide = "L";
-            }
-            else if (index == 5)
-            {
-                color = cubeState['R'][1];
-                faceSide = "R";
-            }
-            else if (index == 7)
-            {
-                color = cubeState['F'][1];
-                faceSide = "F";
-            }
-            std::cout << "Couleur sur le coté de cette arrete: " << color << std::endl;
-            // turn the face U for the color to be on the face color
+    // Boucle pour chaque position possible d'une arête blanche sur la face U
+    for (int index : {1, 3, 5, 7}) {
+        // Vérifie si l'arête à cet index est blanche
+        if (cubeState['U'][index] == "W") {
+            std::string color; // Pour stocker la couleur adjacente à l'arête blanche
+            char targetFace; // Pour stocker la face cible pour cette couleur
 
-            // while()
-
-            switch (index)
-            {
-            case 1:
-                parseMove("F2", true);
-                break;
-            case 3:
-                parseMove("L2", true);
-                break;
-            case 5:
-                parseMove("R2", true);
-                break;
-            case 7:
-                parseMove("B2", true);
-                break;
+            // Déterminer la couleur adjacente et la face cible
+            if (index == 1) {
+                color = cubeState['B'][7]; targetFace = 'B';
+            } else if (index == 3) {
+                color = cubeState['L'][1]; targetFace = 'L';
+            } else if (index == 5) {
+                color = cubeState['R'][1]; targetFace = 'R';
+            } else if (index == 7) {
+                color = cubeState['F'][1]; targetFace = 'F';
             }
+
+            // Affiche la couleur et la face cible
+            std::cout << "Couleur adjacente: " << color << ", Face cible: " << targetFace << std::endl;
+
+            // Tourner la face U jusqu'à ce que l'arête blanche soit au-dessus de sa face cible
+            while (cubeState[targetFace][4] != color) {
+                parseMove("U", true);
+            }
+
+            // Une fois en position, tourner la face cible 2 fois pour placer l'arête en bas
+            std::string move = std::string(1, targetFace);
+            move = move + "2";
+            parseMove(move, true);
         }
     }
 }
@@ -110,6 +92,7 @@ void RubiksCube::CrossOnTopLayer()
                     std::cout << "Arete trouvee !!!!!!!!!"
                               << "a face :" << face << "et index : " << index << std::endl;
                     std::cout << "cubestate : " << cubeState['B'][1] << std::endl;
+                     std::cout << "Click on a key to continue" << std::endl;
                     return true; // Une arête blanche est trouvée
                 }
             }
@@ -128,6 +111,11 @@ void RubiksCube::CrossOnTopLayer()
                 // Vérifier si l'arête à cet index est blanche
                 if (cubeState[face][index] == "W")
                 { // Si une arête blanche est trouvée
+                    std::cout << "Arete trouvee !!!!!!!!!"
+                              << "a face :" << face << "et index : " << index << std::endl;
+    getchar();
+    // clean buffer 
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cout << "White edge found on face " << face << " at index " << index << std::endl;
 
                     // Si l'arête est sur la face blanche (D dans notre cas)
@@ -209,7 +197,7 @@ void RubiksCube::CrossOnTopLayer()
                             {
                                 while (cubeState['U'][index] == "W")
                                     parseMove("U", true);
-                                if (index == 3)
+                                if (index == 5)
                                     parseMove("R'", true);
                                 else
                                     parseMove("L", true);
