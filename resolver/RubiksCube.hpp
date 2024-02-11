@@ -22,6 +22,8 @@ void makeMove(const std::string& move);
 void PutCrossOnBottomLayer();
 void PutWhiteCorners();
 bool checkCornerDown(int index);
+char* whichColor(char face, int index, int cornerPosition);
+int combination(char face, int index);
 
 
 
