@@ -30,12 +30,12 @@ bool RubiksCube::applyMixSequence(const std::string& sequence) {
         }
         // put the display to display 
         std::cout.flush();
-        showRubik();
-        
+        // showRubik();
+
         // if this is not the last move we sleep for 1 second
-        if(iss.rdbuf()->in_avail() != 0) {
-            usleep(1000000);
-        }
+        // if(iss.rdbuf()->in_avail() != 0) {
+        //     usleep(1000000);
+        // }
         // Appliquer le mouvement au cube
     }
     std::cout << std::endl;
@@ -43,8 +43,21 @@ bool RubiksCube::applyMixSequence(const std::string& sequence) {
 }
 
 std::string RubiksCube::solveCube() {
-    std::string solution = "R U R' U'";
-    std::cout << "Solution: " << solution << std::endl;
+    std::cout << "Choose a resolution method: " << std::endl;
+    std::cout << "1. Resolution by layers" << std::endl;
+    std::cout << "2. Resolution by Thistlethwaite's algorithm" << std::endl;
+
+    int choice;
+    std::cin >> choice;
+    std::string solution;
+    if (choice == 1) {
+        resolutionByLayers();
+    } else if (choice == 2) {
+        resolutionByLayers();
+    } else {
+        std::cerr << "Invalid choice" << std::endl;
+        return "";
+    }
     return solution;
 }
 
@@ -99,6 +112,10 @@ bool RubiksCube::parseMove(const std::string& move, bool enableMove) {
         std::cerr << "\033[1;31m" << move << " << Invalid move !\033[0m" << std::endl;
         return false;
     }
+ std::cout << "Move recu : " << move << std::endl;
+ showRubik();
+ if (enableMove)
+        usleep(2000000);
     return true;
 }
 

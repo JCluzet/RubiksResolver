@@ -21,6 +21,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     std::cout << "==== END OF MIXING CUBE ====" << std::endl << std::endl;
+    // std::cout << cube.isCrossWhiteFormed() << std::endl;
     std::cout << "==== STARTING SOLVING ====" << std::endl;
     std::string solution = cube.solveCube();
     std::cout << "Solution sequence: " << solution << std::endl;

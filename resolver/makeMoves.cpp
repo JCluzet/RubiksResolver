@@ -2,6 +2,7 @@
 
 RubiksCube::RubiksCube() {
     // Initialisation de l'état du cube
+    solution = "";
     cubeState = {
         {'F', std::vector<std::string>(9, "R")}, // GOOD
         {'R', std::vector<std::string>(9, "G")}, // GOOD
@@ -171,9 +172,9 @@ void RubiksCube::makeMoveL() {
     cubeState['D'][3] = tempF[3];
     cubeState['D'][6] = tempF[6];
 
-    cubeState['B'][2] = tempD[6];
-    cubeState['B'][5] = tempD[3];
-    cubeState['B'][8] = tempD[0];
+    cubeState['B'][0] = tempD[0];
+    cubeState['B'][3] = tempD[3];
+    cubeState['B'][6] = tempD[6];
 }
 
 void RubiksCube::makeMoveR() {
@@ -207,18 +208,35 @@ void RubiksCube::makeMoveR() {
     cubeState['D'][5] = tempB[3];
     cubeState['D'][8] = tempB[0];
 
-    cubeState['B'][0] = tempU[8];
-    cubeState['B'][3] = tempU[5];
-    cubeState['B'][6] = tempU[2];
+    cubeState['B'][2] = tempU[6];
+    cubeState['B'][5] = tempU[3];
+    cubeState['B'][8] = tempU[0];
 }
 
 
 
 void RubiksCube::showRubik() {
     std::cout << std::endl;
+
+    auto printColorSquare = [&](const std::string& colorCode) {
+        // Map des codes de couleur au code ANSI correspondant pour le fond
+        std::map<std::string, std::string> colorMap = {
+            {"W", "\033[47m  \033[0m"}, // Blanc
+            {"G", "\033[42m  \033[0m"}, // Vert
+            {"R", "\033[41m  \033[0m"}, // Rouge
+            {"B", "\033[44m  \033[0m"}, // Bleu
+            {"O", "\033[48;5;208m  \033[0m"},// Orange (pas de code ANSI direct, utilisation du jaune)
+            {"Y", "\033[103m  \033[0m"} // Jaune
+        };
+
+        // Afficher le carré de couleur
+        std::cout << colorMap[colorCode];
+    };
+
     auto printRow = [&](const std::vector<std::string>& face, int row) {
         for (int i = 0; i < 3; ++i) {
-            std::cout << face[row * 3 + i] << " ";
+            printColorSquare(face[row * 3 + i]);
+            std::cout << ""; // Espace entre les carrés pour une meilleure lisibilité
         }
     };
 
@@ -282,7 +300,6 @@ void RubiksCube::resolutionPercentage() const {
     // Affichage du pourcentage de résolution
     std::cout << "Résolution du Rubik's Cube : " << percentage << "% complété." << std::endl;
 }
-
 
 
 void RubiksCube::makeMoves(const std::vector<std::string>& moves) {

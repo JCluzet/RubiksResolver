@@ -18,7 +18,8 @@ FLAGS    := -std=c++11
 SRCS        :=      RubiksCube.cpp \
                           main.cpp \
 						makeMoves.cpp \
-                          
+                        resolutionByLayer.cpp \
+	
 OBJS        := ${SRCS:.cpp=.o}
 
 .cpp.o:
