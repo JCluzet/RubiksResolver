@@ -1,4 +1,3 @@
-import cube_controller
 import numpy as np
 import pygame
 from pygame.locals import *
@@ -567,17 +566,17 @@ def rotate_cube(move, reverse=False):
                     flag = all(vertex[2] > 0 for vertex in piece)
                     if flag:
                         for i in range(8):
-                            piece[i] = z_rot(piece[i], -theta)
+                            piece[i] = z_rot(piece[i], theta)
             for piece in corner_pieces:
                 flag = all(vertex[2] > 0 for vertex in piece)
                 if flag:
                     for i in range(8):
-                        piece[i] = z_rot(piece[i], -theta)
+                        piece[i] = z_rot(piece[i], theta)
 
     if move =='L':
         for x in range(theta_inc):
             for i in range(8):
-                center_pieces[1][i] = x_rot(center_pieces[1][i], theta)
+                center_pieces[1][i] = x_rot(center_pieces[1][i], -theta)
             for axis in edge_pieces:
                 for piece in axis:
                     flag = True
@@ -587,7 +586,7 @@ def rotate_cube(move, reverse=False):
                             break
                     if flag:
                         for i in range(8):
-                            piece[i] = x_rot(piece[i], theta)
+                            piece[i] = x_rot(piece[i], -theta)
             for piece in corner_pieces:
                 flag = True
                 for vertex in piece:
@@ -596,12 +595,12 @@ def rotate_cube(move, reverse=False):
                         break
                 if flag:
                     for i in range(8):
-                        piece[i] = x_rot(piece[i], theta)
+                        piece[i] = x_rot(piece[i], -theta)
 
     if move =='B':
         for x in range(theta_inc):
             for i in range(8):
-                center_pieces[2][i] = z_rot(center_pieces[2][i], theta)
+                center_pieces[2][i] = z_rot(center_pieces[2][i], -theta)
             for axis in edge_pieces:
                 for piece in axis:
                     flag = True
@@ -611,7 +610,7 @@ def rotate_cube(move, reverse=False):
                             break
                     if flag:
                         for i in range(8):
-                            piece[i] = z_rot(piece[i], theta)
+                            piece[i] = z_rot(piece[i], -theta)
             for piece in corner_pieces:
                 flag = True
                 for vertex in piece:
@@ -620,7 +619,7 @@ def rotate_cube(move, reverse=False):
                         break
                 if flag:
                     for i in range(8):
-                        piece[i] = z_rot(piece[i], theta)
+                        piece[i] = z_rot(piece[i], -theta)
 
     if move =='R':
         for x in range(theta_inc):
@@ -673,7 +672,7 @@ def rotate_cube(move, reverse=False):
     if move =='D':
         for x in range(theta_inc):
             for i in range(8):
-                center_pieces[5][i] = y_rot(center_pieces[5][i], theta)
+                center_pieces[5][i] = y_rot(center_pieces[5][i], -theta)
             for axis in edge_pieces:
                 for piece in axis:
                     flag = True
@@ -683,7 +682,7 @@ def rotate_cube(move, reverse=False):
                             break
                     if flag:
                         for i in range(8):
-                            piece[i] = y_rot(piece[i], theta)
+                            piece[i] = y_rot(piece[i], -theta)
             for piece in corner_pieces:
                 flag = True
                 for vertex in piece:
@@ -692,7 +691,7 @@ def rotate_cube(move, reverse=False):
                         break
                 if flag:
                     for i in range(8):
-                        piece[i] = y_rot(piece[i], theta)
+                        piece[i] = y_rot(piece[i], -theta)
 
 def key_callback(window, key, scancode, action, mods):
     if action == glfw.PRESS:
@@ -713,10 +712,26 @@ def update_cube(move):
     print(f"Received move: {move}")
     rotate_cube(move)
 
+def read_and_execute_moves(filepath):
+    """
+    Lit les nouveaux mouvements depuis le fichier, les applique au cube, puis supprime les lignes lues.
+    """
+    with open(filepath, 'r') as file:
+        moves = file.readlines()
+
+    # Appliquer les mouvements lus
+    for move in moves:
+        move = move.strip()  # Enlève les espaces et retours à la ligne
+        if move:  # Vérifie que la ligne n'est pas vide
+            print(f"Executing move: {move}")
+            rotate_cube(move)  # Remplacez cette fonction par votre logique d'application du mouvement
+
+    # Réécrire le fichier sans les mouvements qui viennent d'être lus
+    with open(filepath, 'w') as file:
+        file.write("")  # Efface le contenu du fichier après avoir exécuté les mouvements
+
 def main():
     global window, last_x, last_y
-    cube_controller_instance = cube_controller.CubeController()
-    cube_controller_instance.moveSignal.connect(update_cube)
 
     if not glfw.init():
         return
@@ -735,8 +750,17 @@ def main():
     glfw.set_mouse_button_callback(window, mouse_button_callback)
     glfw.set_key_callback(window, key_callback)
 
+    filepath = 'moves.txt'
+
     while not glfw.window_should_close(window):
         glfw.poll_events()
+        try:
+            read_and_execute_moves(filepath)
+        except FileNotFoundError:
+            print("Moves file not found. Please ensure 'moves.txt' exists.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        
         display()
 
     glfw.terminate()
