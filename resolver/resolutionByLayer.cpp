@@ -17,22 +17,41 @@ void RubiksCube::resolutionByLayers()
     std::cout << "3. Put White Corners in Position" << std::endl;
 
     PutWhiteCorners();
+
+    std::cout << "4. Next a venir" << std::endl;
+
+    return ;
+}
+
+
+int RubiksCube::getIndexofColoroOnFace(std::string color, char face)
+{
+    for (int i = 0; i < 9; i++)
+    {
+        if (cubeState[face][i] == color)
+        {
+            std::cout << "index de la couleur " << color << " sur la face " << face << " est : " << i << std::endl;
+            return i;
+        }
+    }
+    return -1;
 }
 
 
 bool RubiksCube::checkCornerDown(int index) {
+    std::cout << "CheckCornerDown()" << std::endl;
     switch(index) {
         case 0:
             if (cubeState['L'][6] != "B" && cubeState['F'][6] != "R")
                 return true;
         case 2:
-            if (cubeState['F'][8] != "R" && cubeState['R'][8] != "G")
+            if (cubeState['F'][8] != "R" && cubeState['R'][6] != "G")
                 return true;
         case 6:
-            if (cubeState['L'][0] != "B" && cubeState['B'][0] != "O")
+            if (cubeState['L'][6] != "B" && cubeState['B'][0] != "O")
                 return true;
         case 8:
-            if (cubeState['R'][2] != "G" && cubeState['B'][2] != "O")
+            if (cubeState['R'][8] != "G" && cubeState['B'][2] != "O")
                 return true;
     }
     return false;
@@ -48,18 +67,21 @@ bool RubiksCube::checkCornerDown(int index) {
 
 
 bool isBottomLayer(char face, int index) {
+    std::cout << "isBottomLayer()" << std::endl;
     if (face == 'D')
         return (true);
-    else if (face == 'B')
+    else if (face == 'B') {
         if (index == 0 || index == 1 || index == 2)
             return (true);
-    else if (face == 'R' || face == 'L' || face == 'F')
+    } else if (face == 'R' || face == 'L' || face == 'F') {
         if (index == 6 || index == 7 || index == 8)
             return (true);
+    }
     return (false);
 }
 
 int whichCorner(char face, int index) {
+    std::cout << "whichCorner()" << std::endl;
     switch(index) {
         case 0:
             if (face == 'F')
@@ -112,8 +134,10 @@ int whichCorner(char face, int index) {
     }
 }
 
-char* RubiksCube::whichColor(char face, int index, int cornerPosition) {
-    char *colors;
+std::string RubiksCube::whichColor(char face, int index, int cornerPosition) {
+    std::cout << "whichColor()" << std::endl;
+    std::cout << "CornerPosition = " << cornerPosition << std::endl;
+    std::string colors;
     switch(cornerPosition) {
         case 1:
             if (cubeState['F'][6] == "R" || cubeState['L'][8] == "R" || cubeState['D'][0] == "R") {
@@ -161,6 +185,7 @@ char* RubiksCube::whichColor(char face, int index, int cornerPosition) {
             }
             break;
         case 4:
+            // std::cout << "Valeurs : B[8]: " << cubeState['B'][8] << " R[2]: " << cubeState['R'][2] << " U[2]: " << cubeState['U'][2] << std::endl;
             if (cubeState['B'][2] == "R" || cubeState['R'][8] == "R" || cubeState['D'][8] == "R") {
                 colors[0] = 'R';
                 if (cubeState['B'][2] == "B" || cubeState['R'][8] == "B" || cubeState['D'][8] == "B")
@@ -236,12 +261,14 @@ char* RubiksCube::whichColor(char face, int index, int cornerPosition) {
             }
             break;
     }
+    std::cout << "Colors Found: " << colors[0] << ", " << colors[1] << std::endl;
     return (colors);
 }
 
 int RubiksCube::combination(char face, int index) {
+    std::cout << "combination()" << std::endl;
     int cornerPosition = whichCorner(face, index);
-    char *colors = whichColor(face, index, cornerPosition);
+    std::string colors = whichColor(face, index, cornerPosition);
     if (colors[0] == 'R') {
         if (colors[1] == 'B')
             return 1;
@@ -256,6 +283,7 @@ int RubiksCube::combination(char face, int index) {
 }
 
 bool isItFacingYou(int cornerPosition, char face) {
+    std::cout << "isItFacingYou()" << std::endl;
     switch(cornerPosition) {
         case 1:
             if (face == 'L')
@@ -277,24 +305,25 @@ bool isItFacingYou(int cornerPosition, char face) {
 }
 
 void RubiksCube::getOutOfBottomLayer(char face, int index) {
+    std::cout << "getOutOfBottomLayer()" << std::endl;
     int corner = whichCorner(face, index);
     switch(corner) {
-        case 0:
+        case 1:
             parseMove("L'", true); // L' U L
             parseMove("U", true);
             parseMove("L", true);
             break;
-        case 1:
+        case 2:
             parseMove("F'", true); // F' U F
             parseMove("U", true);
             parseMove("F", true);
             break;
-        case 2:
+        case 3:
             parseMove("B'", true); // B' U B
             parseMove("U", true);
             parseMove("B", true);
             break;
-        case 3:
+        case 4:
             parseMove("R'", true); // R' U R
             parseMove("U", true);
             parseMove("R", true);
@@ -302,97 +331,154 @@ void RubiksCube::getOutOfBottomLayer(char face, int index) {
     }
 }
 
+int actualiseWhereWeAre(int whereWeAre) {
+        if (whereWeAre == 1)
+            return(5);
+        else if (whereWeAre == 2)
+            return(6);
+        else if (whereWeAre == 3)
+            return(7);
+        else if (whereWeAre == 4)
+            return(8);
+        if (whereWeAre == 5)
+            return(7);
+        else if (whereWeAre == 6)
+            return(5);
+        else if (whereWeAre == 7)
+            return(8);
+        else if (whereWeAre == 8)
+            return(6);
+}
+
 void RubiksCube::putCornerInPosition(int whereToGo, int whereWeAre) {
+    std::cout << "putCornerInPosition()" << std::endl;
+    std::cout << "WhereWeAre: " << whereWeAre << std::endl;
+    std::cout << "WhereToGo: " << whereToGo << std::endl;
+    whereWeAre = actualiseWhereWeAre(whereWeAre);
     int i = whereWeAre - whereToGo;
     while (i != 4) {
+    std::cout << "WhereWeAre Boucle: " << whereWeAre << std::endl;
         parseMove("U", true);
-        if (whereWeAre == 4)
-            whereWeAre = 6;
-        else if (whereWeAre == 5)
-            whereWeAre = 4;
-        else if (whereWeAre == 6)
-            whereWeAre = 7;
-        else if (whereWeAre == 7)
-            whereWeAre = 5;
+        whereWeAre = actualiseWhereWeAre(whereWeAre);
         i = whereWeAre - whereToGo;
     }
 }
 
 void RubiksCube::sendUpAlgo(char face) {
-    parseMove(std::string(face + '\'', 2), true);
-    parseMove("D2", true);
-    parseMove(std::string(face, 1), true);
-    parseMove("D", true);
-    parseMove(std::string(face + '\'', 2), true);
-    parseMove("D'", true);
-    parseMove(std::string(face, 1), true);
+    std::cout << "sendUpAlgo()" << std::endl;
+    std::cout << "Face : " << face << std::endl;
+    std::string moveWithPrime = std::string(1, face) + '\'';
+
+    // Define the moves in the algorithm
+    std::vector<std::string> moves = {
+        moveWithPrime,
+        "U2",
+        std::string(1, face),
+        "U",
+        moveWithPrime,
+        "U'",
+        std::string(1, face)
+    };
+
+    // Perform each move in the algorithm
+    for (const auto& move : moves) {
+        parseMove(move, true);
+    }
 }
 
 void RubiksCube::doUpAlgo(int whereToGo) {
+    std::cout << "doUpAlgo()" << std::endl;
     switch(whereToGo) {
         case 1: // F' D2 F D F' D' F
-            sendUpAlgo('F');
-            break;
-        case 2: // R' D2 R D R' D' R
-            sendUpAlgo('R');
-            break;
-        case 3: // L' D2 L D L' D' L
             sendUpAlgo('L');
             break;
-        case 4: // B' D2 B D B' D' B
+        case 2: // R' D2 R D R' D' R
+            sendUpAlgo('F');
+            break;
+        case 3: // L' D2 L D L' D' L
             sendUpAlgo('B');
+            break;
+        case 4: // B' D2 B D B' D' B
+            sendUpAlgo('R');
             break;
     }
 }
 
 void RubiksCube::sendFacingYouALgo(char face) {
-    parseMove(std::string(face, 1), true);
-    parseMove("D", true);
-    parseMove(std::string(face + '\'', 2), true);
+    std::cout << "sendFacingYouALgo()" << std::endl;
+    std::cout << "Face : " << face << std::endl;
+    std::string moveWithPrime = std::string(1, face) + '\'';
+
+    // Define the moves in the algorithm
+    std::vector<std::string> moves = {
+        std::string(1, face),
+        "U",
+        moveWithPrime,
+    };
+
+    // Perform each move in the algorithm
+    for (const auto& move : moves) {
+        parseMove(move, true);
+    }
 }
 
 void RubiksCube::doFacingYouAlgo(int whereToGo) {
+    std::cout << "doFacingYouAlgo()" << std::endl;
     switch(whereToGo) {
         case 1: // L D L'
-            sendFacingYouALgo('L');
-            break;
-        case 2: //F D F'
             sendFacingYouALgo('F');
             break;
+        case 2: //F D F'
+            sendFacingYouALgo('R');
+            break;
         case 3: // B D B'
-            sendFacingYouALgo('B');
+            sendFacingYouALgo('L');
             break;
         case 4: // R D R'
-            sendFacingYouALgo('R');
+            sendFacingYouALgo('B');
             break;
     }
 }
 
 void RubiksCube::sendFacingRightAlgo(char face) {
-    parseMove(std::string(face + '\'', 2), true);
-    parseMove("D'", true);
-    parseMove(std::string(face, 1), true);
+    std::cout << "sendFacingRightAlgo()" << std::endl;
+    std::cout << "Face : " << face << std::endl;
+    std::string moveWithPrime = std::string(1, face) + '\'';
+
+    // Define the moves in the algorithm
+    std::vector<std::string> moves = {
+        moveWithPrime,
+        "U",
+        std::string(1, face),
+    };
+
+    // Perform each move in the algorithm
+    for (const auto& move : moves) {
+        parseMove(move, true);
+    }
 }
 
 void RubiksCube::doFacingRightAlgo(int whereToGo) {
+    std::cout << "doFacingRightAlgo()" << std::endl;
     switch(whereToGo) {
         case 1: // F' D' F
-            sendFacingRightAlgo('F');
-            break;
-        case 2: // R' D' R
-            sendFacingRightAlgo('R');
-            break;
-        case 3: // L' D' L
             sendFacingRightAlgo('L');
             break;
-        case 4: // B' D' B
+        case 2: // R' D' R
+            sendFacingRightAlgo('F');
+            break;
+        case 3: // L' D' L
             sendFacingRightAlgo('B');
+            break;
+        case 4: // B' D' B
+            sendFacingRightAlgo('R');
             break;
     }
 }
 
 
 char RubiksCube::whichFace(int whereToGo) {
+    std::cout << "whichFace()" << std::endl;
     switch(whereToGo) {
         case 1:
             if (cubeState['U'][6] == "W")
@@ -430,6 +516,7 @@ char RubiksCube::whichFace(int whereToGo) {
 }
 
 void RubiksCube::doCornerAlgorithm(int whereToGo) {
+    std::cout << "doCornerAlgorithm()" << std::endl;
     char face = whichFace(whereToGo);
     if (face == 'U')
         doUpAlgo(whereToGo); // WHILE FACE FACING YOU R' D2 R D R' D' R
@@ -439,7 +526,26 @@ void RubiksCube::doCornerAlgorithm(int whereToGo) {
         doFacingRightAlgo(whereToGo); // R' D' R
 }
 
+bool RubiksCube::checkWhiteFace() {
+    for (int i = 0; i < 9; i++) {
+        if (cubeState['D'][i] != "W")
+            return (false);
+    }
+    for (auto &face : {'F', 'R', 'L'})
+        for (int i = 6; i < 9; i++) {
+            if (cubeState[face][i] != cubeState[face][4])
+                return (false);
+        }
+    for (int i = 0; i < 2; i++) {
+        if (cubeState['B'][i] != cubeState['B'][4])
+            return (false);
+    }
+    return (true);
+
+}
+
 void RubiksCube::PutWhiteCorners() {
+    std::cout << "PutWhiteCorners()" << std::endl;
     auto hasWhiteCorner = [&]() -> bool {
         for (auto &face : {'F', 'R', 'B', 'L', 'U', 'D'}) {
             for (int index : {0, 2, 6, 8}) {
@@ -459,11 +565,17 @@ void RubiksCube::PutWhiteCorners() {
         for (auto &face : {'F', 'R', 'B', 'L', 'D', 'U'}) {
             for (int index : {0, 2, 6, 8}) {
                 if (cubeState[face][index] == "W") {
-                    int whereToGo = combination(face, index);
-                    if (isBottomLayer(face, index))
-                        getOutOfBottomLayer(face, index);
-                    putCornerInPosition(whereToGo, whichCorner(face, index));
-                    doCornerAlgorithm(whereToGo);
+                    if (!(face == 'D' && checkCornerDown(index))) {
+                        std::cout << "Corner trouve a face :" << face << "et index : " << index << std::endl;
+                        int whereToGo = combination(face, index);
+                        std::cout << "Corner Number To Go: " << whereToGo << std::endl;
+                        if (isBottomLayer(face, index))
+                            getOutOfBottomLayer(face, index);
+                        putCornerInPosition(whereToGo, whichCorner(face, index));
+                        doCornerAlgorithm(whereToGo);
+                        if (checkWhiteFace())
+                            return ;
+                    }
                 }
             }
         }
@@ -486,29 +598,60 @@ void RubiksCube::PutCrossOnBottomLayer()
     // 10. when the color is on the face color, turn this face 2 times
 
     // Boucle pour chaque position possible d'une arête blanche sur la face U
-    for (int index : {1, 3, 5, 7}) {
+    int index = -1;
+    while((index = getIndexofColoroOnFace("W", 'U')) != -1)
+    {
+        std::cout << "index actuel : " << index << std::endl;
+        std::cout << "je rentre dans le 1" << std::endl;
         // Vérifie si l'arête à cet index est blanche
         if (cubeState['U'][index] == "W") {
+            std::cout << "je rentre dans le 2" << std::endl;
             std::string color; // Pour stocker la couleur adjacente à l'arête blanche
             char targetFace; // Pour stocker la face cible pour cette couleur
 
-            // Déterminer la couleur adjacente et la face cible
+            // Déterminer la couleur adjacente
             if (index == 1) {
-                color = cubeState['B'][7]; targetFace = 'B';
+                color = cubeState['B'][7];
             } else if (index == 3) {
-                color = cubeState['L'][1]; targetFace = 'L';
+                color = cubeState['L'][1];
             } else if (index == 5) {
-                color = cubeState['R'][1]; targetFace = 'R';
+                color = cubeState['R'][1];
             } else if (index == 7) {
-                color = cubeState['F'][1]; targetFace = 'F';
+                color = cubeState['F'][1];
+            }
+
+            if (color == "R") {
+                targetFace = 'F';
+            }
+            else if (color == "G") {
+                targetFace = 'R';
+            }
+            else if (color == "O") {
+                targetFace = 'B';
+            }
+            else if (color == "B") {
+                targetFace = 'L';
+            }
+            else if (color == "W") {
+                targetFace = 'D';
+            }
+            else if (color == "Y") {
+                targetFace = 'U';
             }
 
             // Affiche la couleur et la face cible
             std::cout << "Couleur adjacente: " << color << ", Face cible: " << targetFace << std::endl;
 
             // Tourner la face U jusqu'à ce que l'arête blanche soit au-dessus de sa face cible
-            while (cubeState[targetFace][4] != color) {
-                parseMove("U", true);
+            if (targetFace == 'B')
+            {
+                while (cubeState['B'][7] != "O")
+                    parseMove("U", true);
+            }
+            else 
+            {
+                while (cubeState[targetFace][1] != color)
+                    parseMove("U", true);
             }
 
             // Une fois en position, tourner la face cible 2 fois pour placer l'arête en bas

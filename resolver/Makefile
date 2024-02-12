@@ -9,7 +9,7 @@
 
 NAME        := rubiksCube
 CC         := c++
-FLAGS    := -std=c++11
+FLAGS    := -std=c++11 -fsanitize=address -g3
  
 ################################################################################
 #                                 PROGRAM'S SRCS                               #
