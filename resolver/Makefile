@@ -18,7 +18,7 @@ FLAGS    := -std=c++11 -fsanitize=address -g3
 SRCS        :=      RubiksCube.cpp \
                           main.cpp \
 						makeMoves.cpp \
-                        resolutionByLayer.cpp \
+                        algos/resolutionByLayer.cpp \
 	
 OBJS        := ${SRCS:.cpp=.o}
 
