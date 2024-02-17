@@ -1,0 +1,17 @@
+algo principal :
+    le faire
+
+algo resolution by layers :
+
+    mettre cornercolors in place 
+    // boucle 
+    //      reperer un des corners
+    //      le mettre en position
+    //      faire algo droite ou gauche
+    faire croix jaune
+    mettre le dernier edge colored
+    mettre corners jaunes
+
+normer, separer les fichiers en lusieurs pour visibilite
+
+lancement facile qui lance tout en une commande avec ke visualisez et options pour passer le mixage ou devoir appuyer sur une touche pour passer a la suite ou timer
